@@ -1,11 +1,13 @@
 export interface IBusiness {
-    id: number
+    id?: number
     name: string
     location: string
+    manager: IUser
 }
 
 export interface ILog {
-    id: number
+    id?: number
+    idNumber: string
     name: string
     fingerPrint: string
     reason: string
@@ -15,7 +17,7 @@ export interface ILog {
 }
 
 export interface IUser {
-    id: number
+    id?: number
     username: string
     password: string
     role: Role
