@@ -21,6 +21,7 @@ export default function VisitorLogs() {
     useEffect(() => {
         const fetch = async () => {
             const data  = await fetchLogs()
+            console.log("data", data)
             if(Array.isArray(data))
                 setLogs(data)
         }

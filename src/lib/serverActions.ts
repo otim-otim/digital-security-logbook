@@ -34,11 +34,11 @@ export async function fetchLogs(){
   .select(`
     id,
     name,
-    finger_print_url AS fingerPrint,
-    id_number AS idNumber,     
+     fingerPrint,
+    idNumber,     
     reason,
-    time_in AS timeIn,     
-    time_out AS timeOut,    
+    timeIn,     
+    timeOut,    
     
     business:business_id (
       id ,
@@ -47,7 +47,7 @@ export async function fetchLogs(){
     )
   `);
   if(error)
-    return 'error fetching businesses'
+    return error.message
   return data as unknown as ILog[]
 }
 export async function fetchBusinessLogs(businessId : number){
@@ -56,11 +56,11 @@ export async function fetchBusinessLogs(businessId : number){
   .select(`
     id,
     name,
-    finger_print_url AS fingerPrint,
-    id_number AS idNumber,     
+    fingerPrint,
+    idNumber,     
     reason,
-    time_in AS timeIn,     
-    time_out AS timeOut  
+    timeIn,     
+    timeOut  
     
    
   `)
