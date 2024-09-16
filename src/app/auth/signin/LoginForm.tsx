@@ -16,6 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card"
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -44,8 +52,18 @@ export default function LoginForm() {
   }
 
   return (
+    <>
+        <Card className="w-80 m-auto items-center bg-white dark:bg-gray-800 text-black dark:text-white">
+
+      <CardHeader>
+        <CardTitle>Sign In</CardTitle>
+        {/* <CardDescription>Log New Vistor</CardDescription> */}
+      </CardHeader>
+      <CardContent>
+    
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 bg-white dark:bg-gray-900 text-black dark:text-gray-100">
+
         <FormField
           control={form.control}
           name="email"
@@ -83,5 +101,12 @@ export default function LoginForm() {
         <Button type="submit">Sign In</Button>
       </form>
     </Form>
+    </CardContent>
+      {/* <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancel</Button>
+        <Button>Deploy</Button>
+      </CardFooter> */}
+    </Card>
+    </>
   )
 }
