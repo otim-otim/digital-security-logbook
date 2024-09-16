@@ -9,6 +9,7 @@ export interface ILog {
     id?: number
     idNumber: string
     name: string
+    phone: string
     fingerPrint: string
     reason: string
     timeIn: string
