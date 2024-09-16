@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import { createClient } from '@supabase/supabase-js'
+import { Toaster } from "@/components/ui/toaster"
 
 
 
@@ -28,17 +28,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Create a single supabase client for interacting with your database
-//   const supabaseUrl = 'https://dnzerdgnilttyxfyzzyi.supabase.co'
-// const supabaseKey = process.env.SUPABASE_KEY
-// const supabase = createClient(supabaseUrl, supabaseKey)
-const supabase = createClient('https://dnzerdgnilttyxfyzzyi.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuemVyZGduaWx0dHl4Znl6enlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY0MDg1NDksImV4cCI6MjA0MTk4NDU0OX0.wOxIi2A7O0F-hMu8oDlpollwf2RQ0kgETBJLlGIgtxo')
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );
