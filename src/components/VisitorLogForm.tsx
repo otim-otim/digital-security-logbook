@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,41 +22,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card"
 import { useState, useEffect } from "react";
 import { IBusiness, ILog } from "../Types";
 import { faker } from '@faker-js/faker';
 import moment from 'moment';
 import {fetchBusinesses, storeLog} from '../lib/serverActions'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+
 
 const FormSchema = z.object({
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
+  business: z.string(),
+  reason: z.string({
+        required_error: "Reason must be at least 2 characters.",
+        invalid_type_error: "Reason must be a string",
+      }) ,
+phone: z.string({
+    required_error: "A phone number is required.",
+        invalid_type_error: "A valid phone number is required.",
+})
+  
+
+
 })
 
 export default  function VisitorLogForm() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState<IBusiness | null>(null);
   const [businesses, setBusineses] = useState<IBusiness[]>([])
 
-  const [visitor, setVisitor] = useState<ILog>({
-    id: 0,
-    idNumber: '',
-    name: '',
-    fingerPrint: '',
-    reason: '',
-    timeIn: '',
-    timeOut: '',
-    business: {} as IBusiness,
-  });
+
 
 
   useEffect(()=>{
@@ -76,54 +78,25 @@ export default  function VisitorLogForm() {
         updateBusinesses()
 },[])
 
-  function getFingerprintOrIDFace() {
-    setVisitor((prevVisitor) => ({
-      ...prevVisitor,
-      idNumber: faker.string.alphanumeric(10),
-      name: faker.person.fullName(),
-      fingerPrint: faker.internet.url(),
-      reason: 'visit',
-      timeIn: moment().format('YYYY-MM-DD HH:mm:ss'),
-      business: selectedBusiness || {} as IBusiness, // Set the selected business
-    }));
-  }
+  
 
-  async function submitLog() {
+  async function submitLog(visitor : ILog) {
     const {status, statusText } = await storeLog(visitor)
+
+    console.log('submit status',status)
 
     if (status == 201) {
       setIsLoggedIn(true);
+      form.reset()
     } else {
       console.error("Error submitting log:", statusText);
     }
   }
 
-  function populateBusinesses() {
-    return (
-      <div className="w-full">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="btn btn-primary">
-          Select a Business
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          {businesses.map((business) => (
-            <DropdownMenuItem key={business.id} onClick={() => setSelectedBusiness(business)}>
-              {business.name}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      
-
-          
-
-      </div>
-    )
-  }
+  
 
   function showLogDetails(){
-    if(visitor && isLoggedIn)
+    if(isLoggedIn)
     return (
         <div>
             <img src="../../public/images/fingerprintimg.png" />
@@ -147,70 +120,108 @@ export default  function VisitorLogForm() {
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    
+
+    
+
+    const visitor: ILog = {
+        idNumber: faker.string.alphanumeric(10),
+        name: faker.person.fullName(),
+        fingerPrint: faker.internet.url(),
+        reason: data.reason,
+        timeIn: moment().format('YYYY-MM-DD HH:mm:ss'),
+        timeOut: '',
+        business: businesses.find(business => business.id === parseInt(data.business)) || {} as IBusiness,
+      };
+
+    //   console.log('form data', visitor)
+
+      await submitLog(visitor)
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // })
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 m-0 p-2 border border-red-700">
-        <div className="border-r pr-4">
+        <div className="border-r p-4  ">
 
-      <h1>Visitor Login</h1>
-      <div className="  bg-red-500">
-        {/* Conditional Rendering */}
-        {!selectedBusiness  ? (
-          populateBusinesses() // Render this if no business is selected
-        ) : (
-          <button
-            className="btn btn-primary"
-            onMouseOver={getFingerprintOrIDFace}
-            onMouseOut={submitLog}
-          >
-            Put Fingerprint or ID Face
-          </button>
-        )}
-      </div>
-      {isLoggedIn && <p>Visitor has been logged in successfully!</p>}
+      <h1 className=" m-auto items-centered">Visitor Login</h1>
+      
+      
 
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <FormField
           control={form.control}
-          name="email"
+          name="business"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Business Establishment</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
+                    <SelectValue placeholder="Select The Business Place You are visiting" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                    {
-
-                    }
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
+                {businesses.map((business) => (
+            <SelectItem key={business.id} value={business.id.toString()}  >
+              {business.name}
+            </SelectItem>
+          ))}
+                  
                 </SelectContent>
               </Select>
-              <FormDescription>
-                You can manage email addresses in your{" "}
-                <Link href="/examples/forms">email settings</Link>.
-              </FormDescription>
+              
+              <FormMessage />
+            </FormItem>
+
+
+
+
+          )}
+
+          
+        />
+
+<FormField
+          control={form.control}
+          name="reason"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Reason for Visit</FormLabel>
+              <FormControl>
+                <Input placeholder="Reason" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+<FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Contact</FormLabel>
+              <FormControl>
+                <Input type="phone" placeholder="Reason" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+
+        
+        <Button type="submit" className="w-full">place Finger Print/ID face</Button>
       </form>
     </Form>
         </div>
