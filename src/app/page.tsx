@@ -1,6 +1,8 @@
 import Image from "next/image";
-import VisitorLogin from "@/components/VisitorLogin";
+// import VisitorLogin from "@/components/VisitorLogin";
 import VisitorLogs from "@/components/VisitorLogs";
+import VisitorLogForm from "@/components/VisitorLogForm";
+
 import {
   Tabs,
   TabsContent,
@@ -10,10 +12,10 @@ import {
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+    <div className="w-full md:w-5/6 lg:w-2/3  items-center justify-items-center min-h-screen p-auto pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] border m-auto">
+      <main className=" items-center sm:items-start">
 
-      <Tabs defaultValue="account" className="w-full">
+      <Tabs defaultValue="logs" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="logs">Logs</TabsTrigger>
         <TabsTrigger value="newLog">Log new Visitor</TabsTrigger>
@@ -22,7 +24,8 @@ export default function Home() {
         <VisitorLogs  />
       </TabsContent>
       <TabsContent value="newLog">
-      <VisitorLogin  />
+      {/* <VisitorLogin  /> */}
+      <VisitorLogForm  />
       </TabsContent>
     </Tabs>
 
