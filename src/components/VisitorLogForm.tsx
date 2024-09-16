@@ -4,8 +4,7 @@ import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { toast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -37,7 +36,6 @@ import { faker } from '@faker-js/faker';
 import moment from 'moment';
 import {fetchBusinesses, storeLog} from '../lib/serverActions'
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 
 
 const FormSchema = z.object({
@@ -58,6 +56,19 @@ phone: z.string({
 export default  function VisitorLogForm() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [businesses, setBusineses] = useState<IBusiness[]>([])
+  const [visitor, setVisitor] = useState<ILog>({
+    id: 0,
+    idNumber: '',
+    phone: '',
+    name: '',
+    fingerPrint: '',
+    reason: '',
+    timeIn: '',
+    timeOut: '',
+    business: {} as IBusiness,
+  });
+
+  const { toast } = useToast()
 
 
 
@@ -78,9 +89,20 @@ export default  function VisitorLogForm() {
         updateBusinesses()
 },[])
 
+useEffect(() => {
+  const submitVisitorLog = async () => {
+    await submitLog();
+  };
+
+  // Ensure visitor is valid before submitting
+  if (visitor) { 
+    submitVisitorLog();
+  }
+}, [visitor]);
+
   
 
-  async function submitLog(visitor : ILog) {
+  async function submitLog() {
     const {status, statusText } = await storeLog(visitor)
 
     console.log('submit status',status)
@@ -88,6 +110,10 @@ export default  function VisitorLogForm() {
     if (status == 201) {
       setIsLoggedIn(true);
       form.reset()
+      toast({
+      title: "Visit successfully logged",
+      description: "Visit successfully logged",
+    })
     } else {
       console.error("Error submitting log:", statusText);
     }
@@ -99,11 +125,27 @@ export default  function VisitorLogForm() {
     if(isLoggedIn)
     return (
         <div>
-            <img src="../../public/images/fingerprintimg.png" />
+             <Card className="w-full md:w-3/4 m-auto items-centered">
+      <CardHeader>
+        <CardTitle>Visit Logged</CardTitle>
+        {/* <CardDescription>Log New Vistor</CardDescription> */}
+      </CardHeader>
+      <CardContent>
+            <img src="../images/fingerprintimg.png" className="w-32" alt="finger print"/>
             
-            <h2>Name: visitor.name</h2>
-            <h2>ID Number: visitor.idNumber</h2>
-            <h2>ID Number: visitor.idNumber</h2>
+            <h2>Name: {visitor.name}</h2>
+            <h2>ID Number: {visitor.idNumber}</h2>
+            <h2>Office Name: {`${visitor.business.name}, ${visitor.business.location}`}</h2>
+            <h2>purpose of visit reason: {`${visitor.reason}`}</h2>
+            <h2>phone: {`${visitor.phone}`}</h2>
+            <h2>timeIn: {`${visitor.timeIn}`}</h2>
+
+            </CardContent>
+      {/* <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancel</Button>
+        <Button>Deploy</Button>
+      </CardFooter> */}
+    </Card>
 
         </div>
     )
@@ -120,44 +162,46 @@ export default  function VisitorLogForm() {
     resolver: zodResolver(FormSchema),
   })
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    
+  async function onSubmit(data: z.infer<typeof FormSchema>) { 
 
-    
 
-    const visitor: ILog = {
+      setVisitor({
         idNumber: faker.string.alphanumeric(10),
         name: faker.person.fullName(),
+        phone: data.phone,
         fingerPrint: faker.internet.url(),
         reason: data.reason,
         timeIn: moment().format('YYYY-MM-DD HH:mm:ss'),
         timeOut: '',
         business: businesses.find(business => business.id === parseInt(data.business)) || {} as IBusiness,
-      };
+      })
 
-    //   console.log('form data', visitor)
-
-      await submitLog(visitor)
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
+      
+    
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 m-0 p-2 border border-red-700">
-        <div className="border-r p-4  ">
+    <div className="grid grid-cols-1  m-0 p-2 ">
+        {
+            isLoggedIn ? showLogDetails() 
+            : 
+            
+        <div className=" p-4  ">
 
-      <h1 className=" m-auto items-centered">Visitor Login</h1>
+      
+
+      <Card className="w-3/4 m-auto ">
+      <CardHeader>
+        <CardTitle>Visitor Login</CardTitle>
+        {/* <CardDescription>Log New Vistor</CardDescription> */}
+      </CardHeader>
+      <CardContent>
+        
       
       
 
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
         <FormField
           control={form.control}
           name="business"
@@ -172,7 +216,7 @@ export default  function VisitorLogForm() {
                 </FormControl>
                 <SelectContent>
                 {businesses.map((business) => (
-            <SelectItem key={business.id} value={business.id.toString()}  >
+            <SelectItem key={business.id!} value={business.id!.toString()}  >
               {business.name}
             </SelectItem>
           ))}
@@ -191,7 +235,7 @@ export default  function VisitorLogForm() {
           
         />
 
-<FormField
+        <FormField
           control={form.control}
           name="reason"
           render={({ field }) => (
@@ -205,7 +249,7 @@ export default  function VisitorLogForm() {
           )}
         />
 
-<FormField
+        <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
@@ -224,7 +268,16 @@ export default  function VisitorLogForm() {
         <Button type="submit" className="w-full">place Finger Print/ID face</Button>
       </form>
     </Form>
+    </CardContent>
+      {/* <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancel</Button>
+        <Button>Deploy</Button>
+      </CardFooter> */}
+    </Card>
         </div>
+        }
+
+       
     </div>
   )
 }
