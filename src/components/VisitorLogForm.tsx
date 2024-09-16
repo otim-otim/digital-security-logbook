@@ -80,8 +80,7 @@ export default  function VisitorLogForm() {
         if (Array.isArray(data)) {
             setBusineses(data);
           } else {
-            // setBusineses([]);
-            // console.error("data error:", data);
+            // todo:handle this error appropriately
           }
    
           
@@ -208,7 +207,7 @@ useEffect(() => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Business Establishment</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value ?? ''}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select The Business Place You are visiting" />
@@ -242,7 +241,7 @@ useEffect(() => {
             <FormItem>
               <FormLabel>Reason for Visit</FormLabel>
               <FormControl>
-                <Input placeholder="Reason" {...field} />
+                <Input placeholder="Reason" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -256,7 +255,7 @@ useEffect(() => {
             <FormItem>
               <FormLabel>Phone Contact</FormLabel>
               <FormControl>
-                <Input type="phone" placeholder="Reason" {...field} />
+                <Input type="phone" placeholder="Reason" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
