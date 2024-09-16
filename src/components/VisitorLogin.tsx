@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { IBusiness, ILog } from "../Types";
 import { faker } from '@faker-js/faker';
 import moment from 'moment';
-import { supabase } from '../lib/superbaseClient';
 import {fetchBusinesses, storeLog} from '../lib/serverActions'
 import {
   DropdownMenu,
@@ -12,9 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Props {
-  businesses: IBusiness[];
-}
+
+
 
 export default function VisitorLogin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,6 +21,7 @@ export default function VisitorLogin() {
 
   const [visitor, setVisitor] = useState<ILog>({
     id: 0,
+    phone:'',
     idNumber: '',
     name: '',
     fingerPrint: '',
@@ -73,6 +72,7 @@ export default function VisitorLogin() {
 
   function populateBusinesses() {
     return (
+      <div className="w-full">
       <DropdownMenu>
         <DropdownMenuTrigger className="btn btn-primary">
           Select a Business
@@ -85,6 +85,10 @@ export default function VisitorLogin() {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+          
+
+      </div>
     )
   }
 
@@ -123,6 +127,8 @@ export default function VisitorLogin() {
         )}
       </div>
       {isLoggedIn && <p>Visitor has been logged in successfully!</p>}
+
+      {/* <VisitorLogForm /> */}
     </div>
   );
 }
