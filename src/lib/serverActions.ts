@@ -2,6 +2,7 @@
 
 import { ILog } from '@/Types';
 import {supabase} from './superbaseClient'
+import moment from 'moment'
 
 
 export async function storeLog(visitor : ILog){
@@ -68,6 +69,18 @@ export async function fetchBusinessLogs(businessId : number){
   if(error)
     return 'error fetching businesses'
   return data as unknown as ILog[]
+}
+
+export async function logoutVisitor(visitor : ILog, checkout: string){
+  const { status, statusText } = await supabase
+  .from('logs')
+  .update({timeOut: checkout})   
+  .eq('id', visitor.id);
+
+  if(status == 204)
+    return 'updated'
+  return statusText
+
 }
 
 
