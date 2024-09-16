@@ -35,6 +35,7 @@ export async function fetchLogs(){
   .select(`
     id,
     name,
+    phone,
      fingerPrint,
     idNumber,     
     reason,
@@ -57,6 +58,7 @@ export async function fetchBusinessLogs(businessId : number){
   .select(`
     id,
     name,
+    phone,
     fingerPrint,
     idNumber,     
     reason,
