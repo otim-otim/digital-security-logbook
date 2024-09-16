@@ -21,7 +21,6 @@ export default function VisitorLogs() {
     useEffect(() => {
         const fetch = async () => {
             const data  = await fetchLogs()
-            console.log("data", data)
             if(Array.isArray(data))
                 setLogs(data)
         }
@@ -34,8 +33,10 @@ export default function VisitorLogs() {
     }
 
     return (
-        <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
+        <div>
+
+        <Table className="border  mt-4">
+          <TableCaption>A list of your visits</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">#</TableHead>
@@ -50,16 +51,17 @@ export default function VisitorLogs() {
           </TableHeader>
           <TableBody>
             {logs.map((log, index) => (
-              <VisitorLog key={log.id} visitorLog={log} index={index} />
+              <VisitorLog key={log.id} visitorLog={log} index={index+1} />
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>Total Visits</TableCell>
+              <TableCell colSpan={7}>Total Visits</TableCell>
               <TableCell className="text-right">{logs.length}</TableCell>
             </TableRow>
           </TableFooter>
         </Table>
+        </div>
       )
 
 }
