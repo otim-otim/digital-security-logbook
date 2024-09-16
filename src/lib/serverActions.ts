@@ -9,11 +9,11 @@ export async function storeLog(visitor : ILog){
     const response = await supabase
       .from('logs')
       .insert({
-        id_number: visitor.idNumber,
+        idNumber: visitor.idNumber,
         name: visitor.name,
         reason: visitor.reason,
-        finger_print_url: visitor.fingerPrint,
-        time_in: visitor.timeIn,
+        fingerPrint: visitor.fingerPrint,
+        timeIn: visitor.timeIn,
         business_id: visitor.business?.id, 
       });
 
