@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from "react";
 import { IBusiness, ILog } from "../Types";
-import { fetchLogs } from "@/lib/serverActions";
+import { fetchLogs, fetchBusinessLogs } from "@/lib/serverActions";
 import VisitorLog from "./VisitorLog";
 import {
     Table,
@@ -17,10 +17,13 @@ import {
 export default function VisitorLogs() {
 
     const [logs, setLogs] = useState<ILog[]>([]);
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    const role = currentUser?.role
+
 
     useEffect(() => {
         const fetch = async () => {
-            const data  = await fetchLogs()
+            const data  = role != 'Businessmanager' ? await fetchLogs() : await fetchBusinessLogs(currentUser.businesses[0].id)
             if(Array.isArray(data))
                 setLogs(data)
         }
@@ -42,7 +45,7 @@ export default function VisitorLogs() {
               <TableHead className="w-[100px]">#</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>ID Number</TableHead>
-              <TableHead>Business To Visit</TableHead>
+              { role != 'Businessmanager' ?<TableHead>Business To Visit</TableHead> : null}
               <TableHead>Visit Purpose</TableHead>
               <TableHead>Time In</TableHead>
               <TableHead>Time Out</TableHead>
