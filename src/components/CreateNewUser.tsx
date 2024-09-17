@@ -76,7 +76,7 @@ export default  function CreateNewUser() {
 
 useEffect(() => {
   const submitNewUser = async () => {
-    await submitLog();
+    await submitUser();
   };
 
   // Ensure visitor is valid before submitting
@@ -87,7 +87,7 @@ useEffect(() => {
 
   
 
-  async function submitLog() {
+  async function submitUser() {
     const {status, statusText } = await storeUser(user)
 
 

@@ -119,6 +119,14 @@ export async function storeUser(user : IUser){
     return response
 
 }
+export async function storeBusiness(business){
+  const response = await supabase
+    .from('users')
+    .insert(business);
+
+    return response
+
+}
 
 
 
