@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 import Link from 'next/link'
 import AuthProvider from './auth/AuthProvider'
+import UserProvider from './auth/AuthProvider'
 
 
 
@@ -35,15 +36,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Link  href="/api/auth/signin" className="btn bg-red-800" >
-       
-        Login
-
         
-        </Link>
         <AuthProvider >
+        {/* <UserProvider> */}
         {children}
+
         <Toaster />
+        {/* </UserProvider> */}
         </AuthProvider>
 
       </body>

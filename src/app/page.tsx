@@ -1,7 +1,10 @@
-import Image from "next/image";
-// import VisitorLogin from "@/components/VisitorLogin";
+'use client'
 import VisitorLogs from "@/components/VisitorLogs";
 import VisitorLogForm from "@/components/VisitorLogForm";
+import CreateNewUser from "@/components/CreateNewUser";
+import CreateNewBusiness from "@/components/CreateNewBusiness";
+import {  signOut } from "next-auth/react"
+
 
 import {
   Tabs,
@@ -9,23 +12,60 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { Button} from "@/components/ui/button"
 
 export default function Home() {
+
+  const enum Role {
+    ADMIN = "ADMIN",
+    USER = "USER",
+    BUSINESSMANAGER = "BUSINESSMANAGER"
+}
+
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  const role =  currentUser?.role
+  // console.log('user role', role, role != 'Businessmanager', currentUser)
+
+  function nonBusinessManagerTabs(){
+    if(role != 'Businessmanager')
+      return (
+        <>
+        <TabsTrigger value="newUser">Create New User</TabsTrigger>
+        <TabsTrigger value="newLog">Log new Visitor</TabsTrigger>
+        <TabsTrigger value="busineses">Businesses</TabsTrigger>
+        </>
+    )
+    return (
+      <>
+      {/* <TabsTrigger value="newLog">Log new Visitor</TabsTrigger> */}
+      <TabsTrigger value="newBusiness">Create New Business</TabsTrigger>
+      </>
+  )
+  }
   return (
-    <div className="w-full md:w-5/6 lg:w-2/3  items-center justify-items-center min-h-screen p-auto pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] border m-auto">
+       
+    <div className="w-full md:w-5/6 lg:w-2/3  items-center justify-items-center min-h-screen p-auto pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]  m-auto">
       <main className=" items-center sm:items-start">
 
+      <Button onClick={() => signOut()} variant="outline" size="sm" className="w-24 bg-red-900 text-white mb-4">Sign out</Button>
       <Tabs defaultValue="logs" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className={`grid w-full grid-cols-${ role != Role.BUSINESSMANAGER ? 3 : 2}`}>
         <TabsTrigger value="logs">Logs</TabsTrigger>
-        <TabsTrigger value="newLog">Log new Visitor</TabsTrigger>
+        {
+          nonBusinessManagerTabs()
+        }
       </TabsList>
       <TabsContent value="logs">
         <VisitorLogs  />
       </TabsContent>
       <TabsContent value="newLog">
-      {/* <VisitorLogin  /> */}
       <VisitorLogForm  />
+      </TabsContent>
+      <TabsContent value="newUser">
+      <CreateNewUser  />
+      </TabsContent>
+      <TabsContent value="newBusiness">
+      <CreateNewBusiness  />
       </TabsContent>
     </Tabs>
 
@@ -35,54 +75,10 @@ export default function Home() {
        
        
       </main>
-      {/* <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer> */}
+      
     </div>
+
+   
 
     
   );

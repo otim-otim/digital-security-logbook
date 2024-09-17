@@ -1,6 +1,6 @@
 'use server'
 
-import { ILog } from '@/Types';
+import { ILog, IUser } from '@/Types';
 import {supabase} from './superbaseClient'
 import moment from 'moment'
 
@@ -70,6 +70,8 @@ export async function fetchBusinessLogs(businessId : number){
   .eq('business_id', businessId)
   if(error)
     return 'error fetching businesses'
+
+ 
   return data as unknown as ILog[]
 }
 
@@ -84,6 +86,41 @@ export async function logoutVisitor(visitor : ILog, checkout: string){
   return statusText
 
 }
+
+export async function currentUserData(email: string){
+  const { data, error } = await supabase
+  .from('users')
+  .select(`
+    id,
+    name,
+    email,
+    role,
+      businesses (
+      id ,
+      name ,
+      location 
+    ) 
+    
+   
+  `)
+  .eq('email', email)
+  .single()
+  
+  if(error)
+    return 'error fetching businesses'
+  return data 
+}
+
+export async function storeUser(user : IUser){
+  const response = await supabase
+    .from('users')
+    .insert(user);
+
+    return response
+
+}
+
+
 
 
 

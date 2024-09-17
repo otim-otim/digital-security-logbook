@@ -37,7 +37,7 @@ export default function VisitorLog({visitorLog, index}: props) {
                 <TableCell className="font-medium">{index}</TableCell>
                 <TableCell>{visitorLog.name}</TableCell>
                 <TableCell>{visitorLog.idNumber}</TableCell>
-                <TableCell>{`${visitorLog.business?.name} ${visitorLog.business.location}`}</TableCell> 
+                { visitorLog.business ? <TableCell>{`${visitorLog.business?.name} ${visitorLog.business?.location}`}</TableCell> : null }
                 <TableCell>{visitorLog.reason}</TableCell>
                 <TableCell>{moment(visitorLog.timeIn).format('YYYY-MM-DD HH:mm:ss')}</TableCell>
                 <TableCell>{checkout ? moment(checkout).format('YYYY-MM-DD HH:mm:ss') : '' }</TableCell>

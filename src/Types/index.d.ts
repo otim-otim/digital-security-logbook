@@ -20,11 +20,11 @@ export interface ILog {
 export interface IUser {
     id?: number
     username: string
-    password: string
+    password?: string
     role: Role
 }
 
-const enum Role {
+export const enum Role {
     ADMIN = "ADMIN",
     USER = "USER",
     BUSINESSMANAGER = "BUSINESSMANAGER"
